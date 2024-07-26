@@ -54,48 +54,30 @@ export class ManageCustomerComponent {
   }
 
   deleteCustomer(id:number){
-    const swalWithBootstrapButtons = Swal.mixin({
-      customClass: {
-        confirmButton: "btn btn-success",
-        cancelButton: "btn btn-danger"
-      },
-      buttonsStyling: false
-    });
-    swalWithBootstrapButtons.fire({
-      title: "Are you sure?",
-      text: "You won't be able to revert this!",
+    Swal.fire({
+      title: "Warning!",
+      text: "Are you sure want to delete?",
       icon: "warning",
-      showCancelButton: true,
-      confirmButtonText: "Yes, delete it!",
-      cancelButtonText: "No, cancel!",
-      reverseButtons: true
-    }).then((result) => {
-      if (result.isConfirmed) {
+      showConfirmButton:true,
+      showCancelButton:true,
 
-        this.http.delete("http://localhost:8080/customer-controller/delete-customer/${id}", { responseType: 'text' }).subscribe(res => {
-          this.loadCustomerTable()
-          swalWithBootstrapButtons.fire({
-            title: "Deleted!",
-            text: "Your file has been deleted.",
-            icon: "success"
-          });
-          console.log(res);
-
-        })
-        console.log(id);
-
-
-      } else if (
-        /* Read more about handling dismissals below */
-        result.dismiss === Swal.DismissReason.cancel
-      ) {
-        swalWithBootstrapButtons.fire({
-          title: "Cancelled",
-          text: "Your imaginary file is safe :)",
-          icon: "error"
-        });
+    }).then(res=>{
+      if (res.isConfirmed) {
+        this.http.delete(`http://localhost:8080/customer-controller/delete-customer/${id}`).subscribe(
+          res=>{
+            Swal.fire({
+              title: "Deleted Successfully!",
+              text: "Customer deleted Successfully",
+              icon: "success",
+        preConfirm:()=>{
+          window.location.reload()
+        }
+            });
+          }
+        )
       }
     });
+  
   }
       
   
